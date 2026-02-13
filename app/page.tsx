@@ -1,100 +1,92 @@
-"use client";
-import { useState } from "react";
+"use client"
+import { useState } from "react"
 
-const Tipcal = () => {
-  const [bill, setBill] = useState(""); 
-  const [tip, setTip] = useState(0); 
-  const [tipAmount, setTipAmount]= useState(0); 
-  const [totalBill, setTotalBill]= useState(0); 
 
-  const calculate = () => {
-      const billNumber = parseFloat(bill) 
-      const tipValue = billNumber * (tip / 100) 
-      const totalValue = billNumber + tipValue 
-      
-      setTipAmount(tipValue) 
-      setTotalBill(totalValue) 
-      
+interface LeftPanelProps {
+  calculate: (bill: string, tip: number) => void
+}
+
+interface RightPanelProps {
+  tipAmount: number
+  totalBill: number
+}
+
+
+const LeftPanel = ({ calculate }: LeftPanelProps) => {
+  const [bill, setBill] = useState("")
+  const [tip, setTip] = useState(0)
+
+  const handleCalculate = () => {
+    calculate(bill, tip)
   }
 
-  return(
-    <div className="w-full min-h-screen justify-center p-6">
+  return (
+    <div className="border-2">
 
-      <div className="w-full mx-auto space-y-8"></div>
-
-
-    <div className="w-full bg-white rounded-3xl shadow-xl p-4 mb-8">
-
-      <h1 className="text-4xl font-bold text-center text-slate-800 mb-10">
-        Tip Calculator</h1>
-      </div>
-
-      
-
-        <div className="space-y-6">
-        
-        <div className="w-full mb-10">  
-
-          <label className="block text-lg font-semibold text-slate-600 mb-2">Bill Amount
-          </label>
-          <input type="number"
-
+      <div >
+        <label>Bill Amount:</label>
+        <input className="border-2 rounded-2xl"
+          type="number"
           value={bill}
-
-             onChange={(x) => setBill(x.target.value)} //  onchange ทำงานเมื่อ input เปลี่ยน / e คือตัวแปรเหตุการณ์ ,target ตัวที่ถูกพิมพ์, value ค่าปัจจุบันในช่อง
-
-          placeholder="Enter Bill Amount"
-          
-          className="text-xl lg:w-full w-full rounded-xl border border-slate-300 p-4 focus:outline-none focus:ring-2 focus:ring-indigo-400"    
-
-          />
-        </div>
+          onChange={(event) => setBill(event.target.value)}
+        />
       </div>
 
       <div>
-        <p className="text-lg font-semibold text-slate-600 mb-4">Select Tip %
-        </p>
+        <p>Select Tip:</p>
 
-        <div className="grid grid-cols-1 gap-4 mb-4">
- 
-          <button onClick={() => setTip(tip === 5 ? 0 : 5)} //  ถ้า tip เท่ากับ 5  ใช้ค่า 0 ถ้า tip ไม่เท่ากับ 5  ใช้ค่า 5
+        <button className="border-2 rounded-2xl" onClick={() => setTip(tip === 5 ? 0 : 5)}>
+          5%
+        </button>
+        <button className="border-2 rounded-2xl" onClick={() => setTip(tip === 10 ? 0 : 10)}>
+          10%
+        </button>
+        <button className="border-2 rounded-2xl" onClick={() => setTip(tip === 15 ? 0 : 15)}>
+          15%
+        </button>
+        <button className="border-2 rounded-2xl" onClick={() => setTip(tip === 20 ? 0 : 20)}>
+          20%
+        </button>
 
-          className={`rounded-2xl bg-indigo-100 hover:bg-indigo-300 hover:text-white transition text-lg p-4 font-semibold 
-            ${tip === 5 ? "bg-indigo-300 text-white" : "bg-indigo-100"}`}>
-              5%
-              </button>
-        </div>
+        <p>Selected Tip: {tip}%</p>
       </div>
 
-     <button onClick={calculate}
-
-     className="text-2xl text-white font-bold bg-indigo-500 hover:bg-indigo-600 w-full rounded-2xl py-4 transition"
-
-     >Calculate
-     </button>
-      
-      <div className="space-y-8">
-
-      <div className="rounded-2xl bg-slate-50 p-6">
-
-       <p className="text-lg font-semibold text-slate-500 mb-2">
-        Tip Total</p>
-
-       <p className="text-4xl font-bold text-slate-500 mb-2">฿{tipAmount}</p>
-
-       </div>
-    </div>
-
-      <div className="rounded-2xl p-6 bg-indigo-50">
-
-       <p className=" text-lg font-semibold text-indigo-500 mb-2 ">Bill Total</p>
-
-       <p className="text-5xl font-bold text-indigo-600">฿
-        {totalBill}</p>
-
-        </div>
+      <button className="border-2 rounded-2xl" onClick={handleCalculate}>
+        Calculate
+      </button>
     </div>
   )
-
 }
-export default Tipcal;
+
+const RightPanel = ({ tipAmount, totalBill }: RightPanelProps) => {
+  return (
+    <div className="border-2">
+
+      <p>Tip Total: {tipAmount}</p>
+      <p>Bill Total: {totalBill}</p>
+    </div>
+  )
+}
+
+const Tipcal = () => {
+  const [tipAmount, setTipAmount] = useState(0)
+  const [totalBill, setTotalBill] = useState(0)
+
+  const calculate = (bill: string, tip: number) => {
+    const billNumber = parseFloat(bill) || 0
+    const tipValue = billNumber * (tip / 100)
+    const totalValue = billNumber + tipValue
+
+    setTipAmount(tipValue)
+    setTotalBill(totalValue)
+  }
+
+  return (
+    <div style={{ display: "flex", gap: "50px" }}>
+      <LeftPanel calculate={calculate} />
+      <RightPanel tipAmount={tipAmount} totalBill={totalBill} />
+    </div>
+  )
+}
+
+export default Tipcal
